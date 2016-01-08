@@ -25,7 +25,8 @@ INDICATOR_HEADER = '\t'.join(['Indicator',
                               'Available Dimensions',
                               'Statement',
                               'Description',
-                              'NA Value'])
+                              'NA Value',
+                              'Units'])
 
 # See https://www.quandl.com/data/SF1/documentation/indicators
 # These indicators are either going through transitions or being
@@ -49,7 +50,7 @@ def readIndicatorMeta(indicator_file):
   assert len(lines) > 0
   assert lines[0] == INDICATOR_HEADER
   for i in range(1, len(lines)):
-    indicator, title, dimensions, statement, description, na = (
+    indicator, title, dimensions, statement, description, na, units = (
         lines[i].split('\t'))
     dimensions = [d for d in dimensions.split(',') if d != '']
     assert indicator not in indicator_meta

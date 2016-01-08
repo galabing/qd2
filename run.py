@@ -1,38 +1,5 @@
 #!/usr/bin/python2.7
 
-""" Runs data collection, training, analysis and prediction.
-
-    Steps:
-    - make a new dir, eg, /Users/lnyang/lab/qd2/data/runs/20150530
-    - make subdirs raw/sf1, raw/eod, raw/yahoo
-
-    - download sf1 to raw/sf1:
-      https://www.quandl.com/api/v3/databases/SF1/data?auth_token=KH43r2CQK7vmRodxQXX3
-    - unzip and rename to sf1.csv
-    - download indicators to raw/sf1/indicators.txt:
-      http://www.sharadar.com/meta/indicators.txt
-    - download ticker info to raw/sf1/tickers.txt:
-      http://www.sharadar.com/meta/tickers.txt
-
-    - download eod to raw/eod:
-      https://www.quandl.com/api/v3/databases/EOD/data?auth_token=KH43r2CQK7vmRodxQXX3
-    - unzip and rename to eod.csv
-
-    - download market data to raw/yahoo/market:
-      http://real-chart.finance.yahoo.com/table.csv?s=%5ERUA (^RUA for russell 3000)
-      http://real-chart.finance.yahoo.com/table.csv?s=%5EGSPC (^GSPC for sp 500)
-    - rename to R3000.csv, SP500.csv etc
-
-    - prepare feature lists under feature_lists dir
-    - prepare experiment configs under configs dir
-    - prepare membership file under raw/misc dir
-
-    - modify config.py to update:
-      - RUN_ID
-      - CONFIGS
-      - etc
-"""
-
 from config import *
 import logging
 import os
@@ -76,7 +43,7 @@ DO_REMOTE = {
     'compute_hori_rank_perc_features_sector': False,
 
     'compute_hori_perc_features_mrx': True,
-    'compute_vert_gain_features': True,
+    'compute_vert_gain_features': False,
 
     'get_feature_stats': True,
 

@@ -91,7 +91,7 @@ def readTickers(ticker_file):
 SF1_INFO_HEADERS = [
     'Ticker', 'Name', 'CUSIP', 'ISIN', 'Currency', 'Sector', 'Industry',
     'Last Updated', 'Prior Tickers', 'Ticker Change Date', 'Related Tickers',
-    'Exchange', 'SIC', 'Perma Ticker', 'Location',
+    'Exchange', 'SIC', 'Perma Ticker', 'Location', 'Delisted From', 'Is Foreign',
 ]
 
 def readSf1Info(info_file, header):

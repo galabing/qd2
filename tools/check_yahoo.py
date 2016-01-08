@@ -7,7 +7,7 @@
 
 import os
 
-RUN_ID = '20150701'
+RUN_ID = '20160101'
 YAHOO_DIR = (
     '/Users/lnyang/lab/qd2/data/runs/%s/raw/yahoo/sf1' % RUN_ID)
 

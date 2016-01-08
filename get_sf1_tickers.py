@@ -4,9 +4,11 @@ import argparse
 import util
 
 ALLOWED_EXCHANGES = {'NYSE', 'NASDAQ'}
+ALLOWED_FOREIGN = {'N'}
 
 def getSf1Tickers(sf1_file, info_file, ticker_file):
   exchanges = util.readSf1Info(info_file, 'Exchange')
+  foreign = util.readSf1Info(info_file, 'Is Foreign')
   tickers = set()
   with open(sf1_file, 'r') as fp:
     while True:
@@ -17,7 +19,9 @@ def getSf1Tickers(sf1_file, info_file, ticker_file):
       items = item.split('_')
       assert len(items) == 2 or len(items) == 3
       ticker = items[0]
-      if ticker in exchanges and exchanges[ticker] in ALLOWED_EXCHANGES:
+      if (ticker in exchanges and
+          exchanges[ticker] in ALLOWED_EXCHANGES and
+          foreign[ticker] in ALLOWED_FOREIGN):
         tickers.add(ticker)
   tickers = sorted(tickers)
   with open(ticker_file, 'w') as fp:
