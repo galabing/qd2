@@ -25,11 +25,15 @@
     - predict_filter (default '')
     - max_neg (default 0)
     - min_pos (default 0)
+    - use_perc (treat max_neg/min_pos and max_neg_perc/min_pos_perc,
+      default False)
     - use_weight (default False)
     - weight_power (default 1)
     - use_classification (default True), set to False to use regression
 
     TODO: start_date and end_date are hand picked for now but can be automated.
+    TODO: use_classification must be True after the addition of collect_labels.py.
+          Add back rlabel output if regression is desired.
 """
 
 from config import *
@@ -63,6 +67,7 @@ DEFAULT_VALUES = {
     'delay_window': 0,
     'max_neg': 0.0,
     'min_pos': 0.0,
+    'use_perc': False,
     'min_date': '0000-00-00',
     'max_date': '9999-99-99',
     'min_feature_perc': 0.8,
@@ -196,21 +201,31 @@ def collectData(experiment_dir, config_map):
   gain_dir = getLabelDir(config_map['label'])
   feature_list = getFeatureListPath(experiment_dir)
   data_file = getDataPath(data_dir)
-  label_file = getLabelPath(data_dir)
-  rlabel_file = getRlabelPath(data_dir)
   meta_file = getMetaPath(data_dir)
-  weight_file = getWeightPath(data_dir)
 
-  cmd = ('%s/collect_data.py --gain_dir=%s --max_neg=%f --min_pos=%f '
-         '--feature_base_dir=%s --feature_list=%s --feature_stats=%s '
-         '--min_date=%s --max_date=%s --window=%d --min_feature_perc=%f '
-         '--data_file=%s --label_file=%s --rlabel_file=%s --meta_file=%s '
-         '--weight_power=%f --weight_file=%s' % (
-            CODE_DIR, gain_dir, config_map['max_neg'], config_map['min_pos'],
-            FEATURE_DIR, feature_list, FEATURE_STATS_FILE,
+  cmd = ('%s/collect_data.py --gain_dir=%s --feature_base_dir=%s '
+         '--feature_list=%s --feature_stats=%s --min_date=%s --max_date=%s '
+         '--window=%d --min_feature_perc=%f --data_file=%s --meta_file=%s' % (
+            CODE_DIR, gain_dir, FEATURE_DIR, feature_list, FEATURE_STATS_FILE,
             config_map['min_date'], config_map['max_date'],
             config_map['feature_window'], config_map['min_feature_perc'],
-            data_file, label_file, rlabel_file, meta_file,
+            data_file, meta_file))
+  util.run(cmd)
+
+def collectLabels(experiment_dir, config_map):
+  data_dir = getDataDir(experiment_dir)
+  meta_file = getMetaPath(data_dir)
+  label_file = getLabelPath(data_dir)
+  weight_file = getWeightPath(data_dir)
+  if config_map['use_perc']:
+    thresh_args = '--max_neg_perc=%f --min_pos_perc=%f' % (
+        config_map['max_neg'], config_map['min_pos'])
+  else:
+    thresh_args = '--max_neg=%f --min_pos=%f' % (
+        config_map['max_neg'], config_map['min_pos'])
+  cmd = ('%s/collect_labels.py --meta_file=%s %s --label_file=%s '
+         '--weight_power=%f --weight_file=%s' % (
+            CODE_DIR, meta_file, thresh_args, label_file,
             config_map['weight_power'], weight_file))
   util.run(cmd)
 
@@ -425,6 +440,11 @@ def runExperiment(config_file):
   step = '%s_collect_data' % experiment
   if not util.checkDone(step):
     collectData(experiment_dir, config_map)
+    util.markDone(step)
+
+  step = '%s_collect_label' % experiment
+  if not util.checkDone(step):
+    collectLabels(experiment_dir, config_map)
     util.markDone(step)
 
   data_dir = getDataDir(experiment_dir)
